@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>查詢圖書</title>
+</head>
+<body>
+<script type="text/javascript">
+(function(d, s, id){
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/messenger.Extensions.js";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'Messenger'));
+</script>
+
+    <input type="text" name="query">
+    <button id="search" type="submit">查詢</button>
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script>
+function getJsonFromUrl() {
+    var query = location.search.substr(1);
+    var result = {};
+    query.split("&").forEach(function(part) {
+        var item = part.split("=");
+        result[item[0]] = decodeURIComponent(item[1]);
+    });
+    return result;
+}
+
+params = getJsonFromUrl();
+
+$("#search").on("click", function() {
+    $.ajax({
+        type: 'GET',
+        url: "https://srxkyvu5j3.execute-api.ap-northeast-1.amazonaws.com/api/tenlong/book",
+        data: {
+            query: $("input[name=query]").val(),
+            uid: params['uid'],
+            page_id: params['page_id']
+        },
+        success: function(){
+            MessengerExtensions.requestCloseBrowser(function success() {
+              // webview closed
+            }, function error(err) {
+              // an error occurred
+            });
+        }
+    })
+});
+</script>
+</body>
+</html>
